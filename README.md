@@ -6,6 +6,6 @@
 ## 人間がいじるべき元データ
 
 - raw.csv
-- conifg.yaml
+- config.yaml
 
 以上を更新して、 `make build` を行うと、docs 以下が更新されます。
