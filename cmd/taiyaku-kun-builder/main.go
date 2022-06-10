@@ -26,6 +26,8 @@ type TranslationData struct {
 	audio       string
 }
 
+const TranslationsDirectory = "translations"
+
 var (
 	config_file       = "config.yaml"
 	docs_directory    = "docs"
@@ -37,7 +39,7 @@ var (
 <head>
     <title>対訳君(%s)</title>
     <meta charset="UTF-8">
-</head>
+</heFad>
 
 <body>
     <h1>対訳君（%s）</h1>
@@ -127,7 +129,7 @@ func cleanUpDocsExceptForSounds() {
 		log.Fatal(err)
 	}
 
-	err = os.RemoveAll(path.Join(docs_directory, "words"))
+	err = os.RemoveAll(path.Join(docs_directory, TranslationsDirectory))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -141,7 +143,6 @@ func readConfig(filepath string) {
 	}
 
 	err = yaml.Unmarshal(data, &config)
-	fmt.Print(config)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -191,7 +192,7 @@ func genTopPage(translationDatas []TranslationData) {
 	}
 }
 func genWordsPages(translationDatas []TranslationData) {
-	err := os.Mkdir(path.Join(docs_directory, "words"), 0777)
+	err := os.Mkdir(path.Join(docs_directory, TranslationsDirectory), 0777)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -252,7 +253,7 @@ func genWordsListPage(translationDatas []TranslationData) {
 
 	html := fmt.Sprintf(words_page_template, config.Language, table)
 
-	err := ioutil.WriteFile(filepath.Join(docs_directory, "words", "index.html"), []byte(html), 0666)
+	err := ioutil.WriteFile(filepath.Join(docs_directory, TranslationsDirectory, "index.html"), []byte(html), 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -293,12 +294,12 @@ func genWordPage(translationData TranslationData, index int, isFirst bool, isLas
 		translationData.comment,
 		audio_link)
 
-	err := os.Mkdir(path.Join(docs_directory, "words", strconv.Itoa(index)), 0777)
+	err := os.Mkdir(path.Join(docs_directory, TranslationsDirectory, strconv.Itoa(index)), 0777)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = ioutil.WriteFile((filepath.Join(docs_directory, "words", strconv.Itoa(index), "index.html")), []byte(page_html), 0666)
+	err = ioutil.WriteFile((filepath.Join(docs_directory, TranslationsDirectory, strconv.Itoa(index), "index.html")), []byte(page_html), 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
