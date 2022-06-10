@@ -5,7 +5,7 @@
 
 ## 人間がいじるべき元データ
 
-- raw.csv
-- config.yaml
+- [raw.csv](./raw.csv)
+- [config.yaml](./config.yaml)
 
-以上を更新して、 `make build` を行うと、docs 以下が更新されます。
+以上を更新して、 `make build` を行い、git push を行うとdocs 以下が更新されます。
