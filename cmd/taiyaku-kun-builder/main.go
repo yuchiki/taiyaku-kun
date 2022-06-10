@@ -17,6 +17,7 @@ import (
 type Config struct {
 	Language string
 	Author   string
+	Github   string
 }
 
 type TranslationData struct {
@@ -48,10 +49,10 @@ var (
 
     <p>ここで短く能書きをたれる</p>
 
-    <a href="words/index.html">対訳リスト</a>
+    <a href="%s/index.html">対訳リスト</a>
 
     <hr>
-    <a href="https://github.com/yuchiki/taiyaku-kun">このページのソースコード</a>
+    <a href="%s">このページのソースコード</a>
 </body>
 
 </html>
@@ -183,7 +184,13 @@ func readTranslationDatas(filepath string) []TranslationData {
 }
 
 func genTopPage(translationDatas []TranslationData) {
-	html := fmt.Sprintf(top_page_template, config.Language, config.Language, config.Author)
+	html := fmt.Sprintf(
+		top_page_template,
+		config.Language,
+		config.Language,
+		config.Author,
+		TranslationsDirectory,
+		config.Github)
 
 	err := ioutil.WriteFile(filepath.Join(docs_directory, "index.html"), []byte(html), 0666)
 	if err != nil {
