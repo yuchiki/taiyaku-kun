@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -113,9 +114,23 @@ func main() {
 
 	translationDatas := readTranslationDatas(raw_file)
 
+	cleanUpDocsExceptForSounds()
+
 	genTopPage(translationDatas)
 
 	genWordsPages(translationDatas)
+}
+
+func cleanUpDocsExceptForSounds() {
+	err := os.RemoveAll(path.Join(docs_directory, "index.html"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = os.RemoveAll(path.Join(docs_directory, "words"))
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func readConfig(filepath string) {
@@ -176,6 +191,11 @@ func genTopPage(translationDatas []TranslationData) {
 	}
 }
 func genWordsPages(translationDatas []TranslationData) {
+	err := os.Mkdir(path.Join(docs_directory, "words"), 0777)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	genWordsListPage(translationDatas)
 
 	for i := 0; i < len(translationDatas); i++ {
@@ -273,7 +293,12 @@ func genWordPage(translationData TranslationData, index int, isFirst bool, isLas
 		translationData.comment,
 		audio_link)
 
-	err := ioutil.WriteFile((filepath.Join(docs_directory, "words", strconv.Itoa(index), "index.html")), []byte(page_html), 0666)
+	err := os.Mkdir(path.Join(docs_directory, "words", strconv.Itoa(index)), 0777)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile((filepath.Join(docs_directory, "words", strconv.Itoa(index), "index.html")), []byte(page_html), 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
