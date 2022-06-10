@@ -201,7 +201,7 @@ func genWordsListPage() {
 				audio_link))
 	}
 
-	table := fmt.Sprintf(table_template, entries)
+	table := fmt.Sprintf(table_template, strings.Join(entries, "\n"))
 
 	html := fmt.Sprintf(words_page_template, config.language, table)
 
