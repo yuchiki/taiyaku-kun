@@ -1,17 +1,21 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	language string
-	author   string
+	Language string
+	Author   string
 }
 
 type TranslationData struct {
@@ -22,33 +26,10 @@ type TranslationData struct {
 }
 
 var (
-	config_file    = "config.yaml"
-	docs_directory = "docs"
-	config         = Config{
-		language: "両毛弁",
-		author:   "ゆーちき(@yuchiki1000yen)",
-	}
-	raw_file         = "raw.csv"
-	translationDatas = []TranslationData{
-		TranslationData{
-			original:    "原文1",
-			translation: "訳文1",
-			comment:     "解説1",
-			audio:       "8",
-		},
-		TranslationData{
-			original:    "原文2",
-			translation: "訳文2",
-			comment:     "解説2",
-			audio:       "",
-		},
-		TranslationData{
-			original:    "原文3",
-			translation: "訳文3",
-			comment:     "解説3",
-			audio:       "",
-		},
-	}
+	config_file       = "config.yaml"
+	docs_directory    = "docs"
+	config            Config
+	raw_file          = "raw.csv"
 	top_page_template = `<!DOCTYPE html>
 <html>
 
@@ -128,19 +109,65 @@ var (
 )
 
 func main() {
-	// configを読む
+	readConfig(config_file)
 
-	// raw fileを読む
+	translationDatas := readTranslationDatas(raw_file)
 
-	// トップページ生成
-	genTopPage()
+	genTopPage(translationDatas)
 
-	// words 生成
 	genWordsPages(translationDatas)
 }
 
-func genTopPage() {
-	html := fmt.Sprintf(top_page_template, config.language, config.language, config.author)
+func readConfig(filepath string) {
+
+	data, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		log.Fatal()
+	}
+
+	err = yaml.Unmarshal(data, &config)
+	fmt.Print(config)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
+func readTranslationDatas(filepath string) []TranslationData {
+	file, err := os.Open(filepath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	r := csv.NewReader(file)
+	records, err := r.ReadAll()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	records = records[1:]
+
+	translationDatas := []TranslationData{}
+
+	for _, record := range records {
+		if len(record) == 1 {
+			continue
+		}
+
+		record = append(record, "", "") // 後半の要素は省略されうるので、空白フィールドを継ぎ足す
+		translationDatas = append(translationDatas, TranslationData{
+			original:    strings.Trim(record[0], " "),
+			translation: strings.Trim(record[1], " "),
+			comment:     strings.Trim(record[2], " "),
+			audio:       strings.Trim(record[3], " "),
+		})
+	}
+
+	return translationDatas
+}
+
+func genTopPage(translationDatas []TranslationData) {
+	html := fmt.Sprintf(top_page_template, config.Language, config.Language, config.Author)
 
 	err := ioutil.WriteFile(filepath.Join(docs_directory, "index.html"), []byte(html), 0666)
 	if err != nil {
@@ -148,15 +175,15 @@ func genTopPage() {
 		os.Exit(1)
 	}
 }
-func genWordsPages(TranslationDatas []TranslationData) {
-	genWordsListPage()
+func genWordsPages(translationDatas []TranslationData) {
+	genWordsListPage(translationDatas)
 
 	for i := 0; i < len(translationDatas); i++ {
 		genWordPage(translationDatas[i], i, i == 0, i == len(translationDatas)-1)
 	}
 }
 
-func genWordsListPage() {
+func genWordsListPage(translationDatas []TranslationData) {
 
 	table_template := `<table>
 	<tr>
@@ -203,12 +230,11 @@ func genWordsListPage() {
 
 	table := fmt.Sprintf(table_template, strings.Join(entries, "\n"))
 
-	html := fmt.Sprintf(words_page_template, config.language, table)
+	html := fmt.Sprintf(words_page_template, config.Language, table)
 
 	err := ioutil.WriteFile(filepath.Join(docs_directory, "words", "index.html"), []byte(html), 0666)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }
 
@@ -240,7 +266,7 @@ func genWordPage(translationData TranslationData, index int, isFirst bool, isLas
 
 	page_html := fmt.Sprintf(
 		word_page_template,
-		config.language,
+		config.Language,
 		header,
 		translationData.original,
 		translationData.translation,
@@ -249,7 +275,6 @@ func genWordPage(translationData TranslationData, index int, isFirst bool, isLas
 
 	err := ioutil.WriteFile((filepath.Join(docs_directory, "words", strconv.Itoa(index), "index.html")), []byte(page_html), 0666)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }
