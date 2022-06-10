@@ -167,11 +167,10 @@ func readTranslationDatas(filepath string) []TranslationData {
 	translationDatas := []TranslationData{}
 
 	for _, record := range records {
-		if len(record) == 1 {
+		if strings.Trim(record[1], " ") == "" {
 			continue
 		}
 
-		record = append(record, "", "") // 後半の要素は省略されうるので、空白フィールドを継ぎ足す
 		translationDatas = append(translationDatas, TranslationData{
 			original:    strings.Trim(record[0], " "),
 			translation: strings.Trim(record[1], " "),
