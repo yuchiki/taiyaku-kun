@@ -88,47 +88,8 @@ var (
 	このページはPoCです
 
 	<p>ここで短く能書きを垂れる</p>
+%s
 
-	<table>
-		<tr>
-			<th>原文</th>
-			<th>訳文</th>
-			<th>音声</th>
-		</tr>
-		<tr>
-			<td>
-				原文1
-			</td>
-			<td>
-				<a href="1/index.html">訳文１</a>
-			</td>
-			<td>
-				<a href="/taiyaku-kun/sounds/8.mp3">音声</a>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				原文2
-			</td>
-			<td>
-				<a href=" 2/index.html">訳文2</a>
-			</td>
-			<td>
-				未収録
-			</td>
-		</tr>
-		<tr>
-			<td>
-				原文3
-			</td>
-			<td>
-				<a href="3/index.html">訳文3</a>
-			</td>
-			<td>
-				未収録
-			</td>
-		</tr>
-	</table>
 </body>
 
 </html>
@@ -196,7 +157,53 @@ func genWordsPages(TranslationDatas []TranslationData) {
 }
 
 func genWordsListPage() {
-	html := fmt.Sprintf(words_page_template, config.language)
+
+	table_template := `<table>
+	<tr>
+		<th>原文</th>
+		<th>訳文</th>
+		<th>音声</th>
+	</tr>
+%s
+</table>`
+
+	entry_template := `<tr>
+	<td>
+		%s
+	</td>
+	<td>
+		<a href="%d/index.html">%s</a>
+	</td>
+	<td>
+		%s
+	</td>
+</tr>`
+
+	entries := []string{}
+
+	for i := 0; i < len(translationDatas); i++ {
+		translationData := translationDatas[i]
+
+		var audio_link string
+		if translationData.audio == "" {
+			audio_link = "<p>未収録</p>"
+		} else {
+			audio_link = fmt.Sprintf(`<a href="../sounds/%s.mp3">音声</a>`, translationData.audio)
+		}
+
+		entries = append(
+			entries,
+			fmt.Sprintf(
+				entry_template,
+				translationData.original,
+				i,
+				translationData.translation,
+				audio_link))
+	}
+
+	table := fmt.Sprintf(table_template, entries)
+
+	html := fmt.Sprintf(words_page_template, config.language, table)
 
 	err := ioutil.WriteFile(filepath.Join(docs_directory, "words", "index.html"), []byte(html), 0666)
 	if err != nil {
