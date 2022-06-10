@@ -186,7 +186,7 @@ func genWordsListPage() {
 
 		var audio_link string
 		if translationData.audio == "" {
-			audio_link = "<p>未収録</p>"
+			audio_link = "未収録"
 		} else {
 			audio_link = fmt.Sprintf(`<a href="../sounds/%s.mp3">音声</a>`, translationData.audio)
 		}
