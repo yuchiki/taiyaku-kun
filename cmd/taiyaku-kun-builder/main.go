@@ -117,7 +117,7 @@ var (
 )
 
 func main() {
-	build_timestamp = time.Now().Format("2000年01月01日 00時00分00秒")
+	build_timestamp = time.Now().Format(time.RFC822)
 
 	readConfig(config_file)
 
