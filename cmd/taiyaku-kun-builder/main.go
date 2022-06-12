@@ -15,9 +15,10 @@ import (
 )
 
 type Config struct {
-	Language string
-	Author   string
-	Github   string
+	Language     string
+	Author       string
+	Github       string
+	Introduction string
 }
 
 type TranslationData struct {
@@ -45,9 +46,8 @@ var (
 <body>
     <h1>対訳君（%s）</h1>
 	<p>編集者: %s</p> <br>
-    このページはPoCです
 
-    <p>ここで短く能書きをたれる</p>
+	%s
 
     <a href="%s/index.html">対訳リスト</a>
 
@@ -188,6 +188,7 @@ func genTopPage(translationDatas []TranslationData) {
 		config.Language,
 		config.Language,
 		config.Author,
+		config.Introduction,
 		TranslationsDirectory,
 		config.Github)
 

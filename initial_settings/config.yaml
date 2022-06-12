@@ -1,3 +1,7 @@
 language: OO語/OO弁
 author: あなたの名前
 github: https://github.com/<あなたのgithub アカウント>/taiyaku-kun
+introduction: |
+  <p>
+    このページは、OO語とXX語の対訳集です
+  </p>
