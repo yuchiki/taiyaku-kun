@@ -15,10 +15,11 @@ import (
 )
 
 type Config struct {
-	Language     string
-	Author       string
-	Github       string
-	Introduction string
+	Language          string
+	Author            string
+	Github            string
+	Introduction      string
+	WordsIntroduction string
 }
 
 type TranslationData struct {
@@ -69,10 +70,8 @@ var (
 <body>
 	<a href="../index.html">トップへ</a>
 	<hr>
-
-	このページはPoCです
-
-	<p>ここで短く能書きを垂れる</p>
+%s
+	<hr>
 %s
 
 </body>
@@ -91,9 +90,6 @@ var (
 <body>
 %s
     <hr>
-
-    このページはPoCです
-
 
     <h1>原文</h1>
     <p>%s</p>
@@ -258,7 +254,7 @@ func genWordsListPage(translationDatas []TranslationData) {
 
 	table := fmt.Sprintf(table_template, strings.Join(entries, "\n"))
 
-	html := fmt.Sprintf(words_page_template, config.Language, table)
+	html := fmt.Sprintf(words_page_template, config.Language, config.WordsIntroduction, table)
 
 	err := ioutil.WriteFile(filepath.Join(docs_directory, TranslationsDirectory, "index.html"), []byte(html), 0666)
 	if err != nil {
