@@ -153,6 +153,7 @@ func readTranslationDatas(filepath string) []TranslationData {
 	}
 
 	r := csv.NewReader(file)
+	r.FieldsPerRecord = -1
 	records, err := r.ReadAll()
 	if err != nil {
 		log.Fatal(err)
@@ -163,6 +164,7 @@ func readTranslationDatas(filepath string) []TranslationData {
 	translationDatas := []TranslationData{}
 
 	for _, record := range records {
+		record = append(record, "", "", "")
 		if strings.Trim(record[1], " ") == "" {
 			continue
 		}
