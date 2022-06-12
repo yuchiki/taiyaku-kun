@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -32,6 +33,7 @@ type TranslationData struct {
 const TranslationsDirectory = "translations"
 
 var (
+	build_timestamp   string
 	config_file       = "config.yaml"
 	docs_directory    = "docs"
 	config            Config
@@ -42,7 +44,7 @@ var (
 <head>
     <title>対訳君(%s)</title>
     <meta charset="UTF-8">
-</heFad>
+</head>
 
 <body>
     <h1>対訳君（%s）</h1>
@@ -54,6 +56,7 @@ var (
 
     <hr>
     <a href="%s">このページのソースコード</a>
+	最終更新日時: %s
 </body>
 
 </html>
@@ -74,6 +77,7 @@ var (
 	<hr>
 %s
 
+最終更新日時: %s
 </body>
 
 </html>
@@ -102,6 +106,9 @@ var (
 
     <h1>音声</h1>
     %s
+
+	<hr>
+最終更新日時: %s
 </body>
 
 </html>
@@ -109,6 +116,8 @@ var (
 )
 
 func main() {
+	build_timestamp = time.Now().Format("2000年01月01日 00時00分00秒")
+
 	readConfig(config_file)
 
 	translationDatas := readTranslationDatas(raw_file)
@@ -188,7 +197,9 @@ func genTopPage(translationDatas []TranslationData) {
 		config.Author,
 		config.Introduction,
 		TranslationsDirectory,
-		config.Github)
+		config.Github,
+		build_timestamp,
+	)
 
 	err := ioutil.WriteFile(filepath.Join(docs_directory, "index.html"), []byte(html), 0666)
 	if err != nil {
@@ -256,7 +267,7 @@ func genWordsListPage(translationDatas []TranslationData) {
 
 	table := fmt.Sprintf(table_template, strings.Join(entries, "\n"))
 
-	html := fmt.Sprintf(words_page_template, config.Language, config.WordsIntroduction, table)
+	html := fmt.Sprintf(words_page_template, config.Language, config.WordsIntroduction, table, build_timestamp)
 
 	err := ioutil.WriteFile(filepath.Join(docs_directory, TranslationsDirectory, "index.html"), []byte(html), 0666)
 	if err != nil {
@@ -297,7 +308,9 @@ func genWordPage(translationData TranslationData, index int, isFirst bool, isLas
 		translationData.original,
 		translationData.translation,
 		translationData.comment,
-		audio_link)
+		audio_link,
+		build_timestamp,
+	)
 
 	err := os.Mkdir(path.Join(docs_directory, TranslationsDirectory, strconv.Itoa(index)), 0777)
 	if err != nil {
