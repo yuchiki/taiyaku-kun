@@ -58,6 +58,8 @@ var (
     <a href="%s">このページのソースコード</a>
 	<br>
 	最終更新日時: %s
+	<br>
+	<a href="recorder/index.html"  >管理者録音用ページ</a>
 </body>
 
 </html>
