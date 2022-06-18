@@ -1,0 +1,58 @@
+<!--
+https://github.com/sozysozbot/recording-pekzep/blob/master/index.html
+を丸々コピーしたもの
+-->
+
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Pekzep Recorder</title>
+
+    <link href="styles/normalize.css" rel="stylesheet" type="text/css">
+    <link href="styles/app.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <header>
+            <h1>Pekzep Recorder</h1>
+        </header>
+
+        <div style="font-size: 200%;"><label for="which_sentence">Select what to record:</label>
+
+            <select name="which_sentence" id="which_sentence">
+                <option>あいうえお</option>
+                <option>かきくけこ</option>
+                <option>さしすせそ</option>
+            </select>
+        </div>
+        <section class="main-controls">
+            <canvas class="visualizer"></canvas>
+            <button class="record">Record</button>
+            <button class="stop">Stop</button>
+
+        </section>
+
+        <section class="sound-clips">
+
+            <!-- <article class="clip">
+        <audio controls></audio>
+        <a href="">Download clip</a>
+      </article> -->
+
+        </section>
+
+    </div>
+
+    <!-- Below is your custom application script -->
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
