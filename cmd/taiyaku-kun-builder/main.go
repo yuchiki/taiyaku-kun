@@ -82,8 +82,6 @@ var (
 %s
 	<hr>
 %s
-<br>
-最終更新日時: %s
 </body>
 
 </html>
@@ -112,9 +110,6 @@ var (
 
     <h1>音声</h1>
     %s
-
-	<br>
-最終更新日時: %s
 </body>
 
 </html>
@@ -341,7 +336,12 @@ func genWordsListPage(translationDatas []TranslationData) {
 		if translationData.audio == "" {
 			audio_link = "未収録"
 		} else {
-			audio_link = fmt.Sprintf(`<a href="../sounds/%s.mp3">音声</a>`, translationData.audio)
+			soundsTemplate := `
+<audio style="vertical-align: middle;" controls="">
+	<source src="%s" type="audio/mpeg">
+	Your browser does not support the audio element.
+</audio>`
+			audio_link = fmt.Sprintf(soundsTemplate, translationData.audio)
 		}
 
 		entries = append(
@@ -387,7 +387,12 @@ func genWordPage(translationData TranslationData, index int, isFirst bool, isLas
 	if translationData.audio == "" {
 		audio_link = ""
 	} else {
-		audio_link = fmt.Sprintf(`<a href="../../sounds/%s.mp3">音声</a>`, translationData.audio)
+		soundsTemplate := `
+		<audio style="vertical-align: middle;" controls="">
+			<source src="%s" type="audio/mpeg">
+			Your browser does not support the audio element.
+		</audio>`
+		audio_link = fmt.Sprintf(soundsTemplate, translationData.audio)
 	}
 
 	page_html := fmt.Sprintf(
@@ -398,7 +403,6 @@ func genWordPage(translationData TranslationData, index int, isFirst bool, isLas
 		translationData.translation,
 		translationData.comment,
 		audio_link,
-		build_timestamp,
 	)
 
 	err := os.Mkdir(path.Join(docs_directory, TranslationsDirectory, strconv.Itoa(index)), 0777)
