@@ -30,7 +30,10 @@ type TranslationData struct {
 	audio       string
 }
 
-const TranslationsDirectory = "translations"
+const (
+	TranslationsDirectory = "translations"
+	RecorderDirectory     = "recorder"
+)
 
 var (
 	build_timestamp   string
@@ -130,6 +133,8 @@ func main() {
 	genTopPage(translationDatas)
 
 	genWordsPages(translationDatas)
+
+	genRecorderPages(translationDatas)
 }
 
 func cleanUpDocsExceptForSounds() {
@@ -210,6 +215,87 @@ func genTopPage(translationDatas []TranslationData) {
 		os.Exit(1)
 	}
 }
+
+func genRecorderPages(translationDatas []TranslationData) {
+	htmlTemplate1 := `
+	<!--
+	https://github.com/sozysozbot/recording-pekzep/blob/master/index.html
+	を丸々コピーしたもの
+	-->
+
+	<!DOCTYPE html>
+	<html lang="en-us">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<title>対訳君</title>
+
+		<link href="normalize.css" rel="stylesheet" type="text/css">
+		<link href="app.css" rel="stylesheet" type="text/css">
+
+	</head>
+
+	<body>
+		<div class="wrapper">
+
+			<header>
+				<h1>録音ページ</h1>
+			</header>
+
+			<div style="font-size: 200%">
+			<label for="which_sentence">録音する文を選択：</label>
+
+				<select name="which_sentence" id="which_sentence">
+`
+
+	htmlTemplate2 :=
+		`
+				</select>
+			</div>
+			<section class="main-controls">
+				<canvas class="visualizer"></canvas>
+				<button class="record">Record</button>
+				<button class="stop">Stop</button>
+
+			</section>
+
+			<section class="sound-clips">
+
+				<!-- <article class="clip">
+			<audio controls></audio>
+			<a href="">Download clip</a>
+		</article> -->
+
+			</section>
+
+		</div>
+
+		<!-- Below is your custom application script -->
+
+		<script src="app.js"></script>
+
+	</body>
+
+	</html>
+
+`
+
+	var options []string
+	for _, translationData := range translationDatas {
+		if translationData.translation != "" {
+			options = append(options, fmt.Sprintf("<option>%s</option>", translationData.translation))
+		}
+	}
+
+	html := fmt.Sprintf("%s\n%s\n%s", htmlTemplate1, strings.Join(options, "\n"), htmlTemplate2)
+
+	err := ioutil.WriteFile(filepath.Join(docs_directory, RecorderDirectory, "index.html"), []byte(html), 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func genWordsPages(translationDatas []TranslationData) {
 	err := os.Mkdir(path.Join(docs_directory, TranslationsDirectory), 0777)
 	if err != nil {
