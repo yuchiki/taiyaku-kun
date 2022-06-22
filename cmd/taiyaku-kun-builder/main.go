@@ -158,8 +158,8 @@ func readConfig(filepath string) {
 
 }
 
-func readTranslationDatas(filepath string) []TranslationData {
-	file, err := os.Open(filepath)
+func readTranslationDatas(rawFilepath string) []TranslationData {
+	file, err := os.Open(rawFilepath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -181,12 +181,24 @@ func readTranslationDatas(filepath string) []TranslationData {
 			continue
 		}
 
-		translationDatas = append(translationDatas, TranslationData{
+		translationData := TranslationData{
 			original:    strings.Trim(record[0], " "),
 			translation: strings.Trim(record[1], " "),
 			comment:     strings.Trim(record[2], " "),
 			audio:       strings.Trim(record[3], " "),
-		})
+		}
+
+		if translationData.audio == "" {
+
+			expectedAudioFileName := fmt.Sprintf("%s.oga", translationData.translation)
+
+			fmt.Println(expectedAudioFileName)
+			if _, err := os.Stat(filepath.Join("docs", "sounds", expectedAudioFileName)); !os.IsNotExist(err) {
+				translationData.audio = expectedAudioFileName
+			}
+		}
+
+		translationDatas = append(translationDatas, translationData)
 	}
 
 	return translationDatas
