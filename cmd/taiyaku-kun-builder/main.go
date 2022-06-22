@@ -356,7 +356,7 @@ func genWordsListPage(translationDatas []TranslationData) {
 
 	table := fmt.Sprintf(table_template, strings.Join(entries, "\n"))
 
-	html := fmt.Sprintf(words_page_template, config.Language, config.WordsIntroduction, table, build_timestamp)
+	html := fmt.Sprintf(words_page_template, config.Language, config.WordsIntroduction, table)
 
 	err := ioutil.WriteFile(filepath.Join(docs_directory, TranslationsDirectory, "index.html"), []byte(html), 0666)
 	if err != nil {
