@@ -338,7 +338,7 @@ func genWordsListPage(translationDatas []TranslationData) {
 		} else {
 			soundsTemplate := `
 <audio style="vertical-align: middle;" controls="">
-	<source src="%s" type="audio/mpeg">
+	<source src="../sounds/%s" type="audio/mpeg">
 	Your browser does not support the audio element.
 </audio>`
 			audio_link = fmt.Sprintf(soundsTemplate, translationData.audio)
@@ -389,7 +389,7 @@ func genWordPage(translationData TranslationData, index int, isFirst bool, isLas
 	} else {
 		soundsTemplate := `
 		<audio style="vertical-align: middle;" controls="">
-			<source src="%s" type="audio/mpeg">
+			<source src="../../sounds/%s" type="audio/mpeg">
 			Your browser does not support the audio element.
 		</audio>`
 		audio_link = fmt.Sprintf(soundsTemplate, translationData.audio)
